@@ -42,6 +42,7 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client.cs" />
     <Compile Include="Enum\AllowCommercialUse.cs" />
     <Compile Include="Enum\AllowModifications.cs" />
     <Compile Include="Enum\ResponseJobStatus.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="Enum\Visibility.cs" />
     <Compile Include="Enum\ScaleType.cs" />
     <Compile Include="Enum\ScaleUnits.cs" />
+    <Compile Include="Exceptions\AstrometryNotConnectedException.cs" />
     <Compile Include="Exceptions\AstrometryException.cs" />
     <Compile Include="RequestSender.cs" />
     <Compile Include="Json\CalibrationResponse.cs" />

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using software.elendil.AstrometryNet;
 using software.elendil.AstrometryNet.Enum;
 using software.elendil.AstrometryNet.Json;
@@ -20,82 +18,35 @@ namespace Test
 
 			try
 			{
-				var client = new RequestSender(apiKey);
-				var res = client.Login();
-				Console.WriteLine("Login : " + res.status);
+				var client2 = new Client(apiKey);
+				var res2 = client2.Login();
+				Console.WriteLine("Login : " + res2.status);
 
-				var arg = new UploadArgs {publicly_visible = Visibility.n};
-				var ur = client.Upload(file, arg);
+				var uploadArguments = new UploadArgs {publicly_visible = Visibility.n};
+				var uploadResponse = client2.Upload(file, uploadArguments);
 
-				SubmissionImagesResponse sir = new SubmissionImagesResponse();
-				do
+				//SubmissionImagesResponse submissionImagesResponse = client2.GetSubmissionImages(uploadResponse.subid);
+				SubmissionStatusResponse submissionStatusResponse = client2.GetSubmissionStatus(uploadResponse.subid);
+				JobStatusResponse jobStatusResponse = client2.GetJobStatus(submissionStatusResponse.jobs[0]);
+
+				if (jobStatusResponse.status.Equals(ResponseJobStatus.success))
 				{
-					try
-					{
-						Console.WriteLine("\nWaiting for images submissions...");
-						sir = client.GetSubmissionImages(ur.subid);
-						Thread.Sleep(1000);
-					}
-					catch (Exception e)
-					{
-						Console.WriteLine(e.Message);
-					}
-				} while (sir.image_ids.Length == 0);
+					var calibrationResponse = client2.GetCalibration(submissionStatusResponse.jobs[0]);
+					var objectsInFieldResponse = client2.GetObjectsInField(submissionStatusResponse.jobs[0]);
 
-				var next = false;
-				var ssr = new SubmissionStatusResponse();
-				string[] jobs = {};
-
-				do
-				{
-					try
-					{
-						Console.WriteLine("\nWaiting for jobs...");
-						ssr = client.GetSubmissionStatus(ur.subid);
-						Thread.Sleep(500);
-						jobs = ssr.jobs.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-					}
-					catch (Exception e)
-					{
-						Console.WriteLine(e.Message);
-						next = true;
-					}
-				} while (jobs.Length == 0 && !next);
-
-
-				var jsr = new JobStatusResponse();
-				do
-				{
-					try
-					{
-						Console.WriteLine("\nSolving...");
-						jsr = client.GetJobStatus(ssr.jobs[0]);
-						Thread.Sleep(1000);
-					}
-					catch (Exception e)
-					{
-						Console.WriteLine(e.Message);
-					}
-				} while (jsr.status.Equals(ResponseJobStatus.solving));
-
-				if (jsr.status.Equals(ResponseJobStatus.success))
-				{
-					CalibrationResponse cr = client.GetCalibration(ssr.jobs[0]);
-					ObjectsInFieldResponse oifr = client.GetObjectsInField(ssr.jobs[0]);
-
-					Console.WriteLine("\nRA : " + cr.ra);
-					Console.WriteLine("Dec : " + cr.dec);
-					Console.WriteLine("radius : " + cr.radius);
+					Console.WriteLine("\nRA : " + calibrationResponse.ra);
+					Console.WriteLine("Dec : " + calibrationResponse.dec);
+					Console.WriteLine("radius : " + calibrationResponse.radius);
 
 					Console.WriteLine("");
-					foreach (string obj in oifr.objects_in_field)
+					foreach (string obj in objectsInFieldResponse.objects_in_field)
 					{
 						Console.WriteLine(obj);
 					}
 				}
 				else
 				{
-					Console.WriteLine("Status : " + jsr.status);
+					Console.WriteLine("Status : " + jobStatusResponse.status);
 				}
 			}
 			catch (Exception e)

@@ -52,7 +52,12 @@ namespace software.elendil.AstrometryNet
 
 		#endregion
 
-		#region Public
+		#region Public/internal
+
+		internal bool Connected
+		{
+			get { return !string.IsNullOrEmpty(session); }
+		}
 
 		/// <summary>
 		/// Log in and set the session key.
@@ -62,7 +67,7 @@ namespace software.elendil.AstrometryNet
 		/// <returns>Login status</returns>
 		/// <exception cref="AstrometryException">Exception raised if the connection request failed</exception>
 		/// <seealso cref="LoginResponse"/>
-		public LoginResponse Login()
+		internal LoginResponse Login()
 		{
 			try
 			{
@@ -90,7 +95,7 @@ namespace software.elendil.AstrometryNet
 		/// <returns>Upload result</returns>
 		/// <exception cref="AstrometryException">Exception raised in the following cases : <c>file</c> does not exist, the session is not initialized, something breaks during upload</exception>
 		/// <seealso cref="UploadArgs"/>
-		public UploadResponse Upload(string file, UploadArgs args)
+		internal UploadResponse Upload(string file, UploadArgs args)
 		{
 			if (!File.Exists(file))
 			{
@@ -200,7 +205,7 @@ namespace software.elendil.AstrometryNet
 		/// <param name="submissionId"></param>
 		/// <returns>Submission images response</returns>
 		/// <exception cref="AstrometryException">Exception raised if the session is not initialized or something breaks during the request</exception>
-		public SubmissionImagesResponse GetSubmissionImages(string submissionId)
+		internal SubmissionImagesResponse GetSubmissionImages(string submissionId)
 		{
 			if (String.IsNullOrEmpty(session))
 			{
@@ -225,7 +230,7 @@ namespace software.elendil.AstrometryNet
 		/// <param name="submissionId">the submission id for which get the status</param>
 		/// <returns>Submission status</returns>
 		/// <exception cref="AstrometryException">Exception raised if the submission id does not exist or something breaks during the request</exception>
-		public SubmissionStatusResponse GetSubmissionStatus(string submissionId)
+		internal SubmissionStatusResponse GetSubmissionStatus(string submissionId)
 		{
 			try
 			{
@@ -253,7 +258,7 @@ namespace software.elendil.AstrometryNet
 		/// <param name="jobId">the job id for which get the status</param>
 		/// <returns>Job status</returns>
 		/// <exception cref="AstrometryException">Exception raised if the job id does not exist or something breaks during the request</exception>
-		public JobStatusResponse GetJobStatus(string jobId)
+		internal JobStatusResponse GetJobStatus(string jobId)
 		{
 			try
 			{
@@ -282,7 +287,7 @@ namespace software.elendil.AstrometryNet
 		/// <param name="jobId">the job id for which get the result</param>
 		/// <returns>Calibration result</returns>
 		/// <exception cref="AstrometryException">Exception raised if the job id does not exist or something breaks during the request</exception>
-		public CalibrationResponse GetCalibration(string jobId)
+		internal CalibrationResponse GetCalibration(string jobId)
 		{
 			try
 			{
@@ -310,7 +315,7 @@ namespace software.elendil.AstrometryNet
 		/// <param name="jobId">the job id for which get the objects</param>
 		/// <returns>Objects in field</returns>
 		/// <exception cref="AstrometryException">Exception raised if the job id does not exist or something breaks during the request</exception>
-		public ObjectsInFieldResponse GetObjectsInField(string jobId)
+		internal ObjectsInFieldResponse GetObjectsInField(string jobId)
 		{
 			try
 			{
