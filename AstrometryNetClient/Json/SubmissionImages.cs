@@ -1,5 +1,5 @@
 ﻿
-namespace AstrometryNetClient.Json
+namespace software.elendil.AstrometryNetClient.Json
 {
 	/// <summary>
 	/// JSON object sent to get the images of a submission

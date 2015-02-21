@@ -1,8 +1,8 @@
-﻿using AstrometryNetClient.Enum;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using software.elendil.AstrometryNetClient.Enum;
 
-namespace AstrometryNetClient.Json
+namespace software.elendil.AstrometryNetClient.Json
 {
 	/// <summary>
 	/// Response of a <see cref="Client.getSubmissionImages">getSubmissionImages</see> request

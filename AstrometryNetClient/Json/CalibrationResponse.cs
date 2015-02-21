@@ -1,5 +1,4 @@
-﻿
-namespace AstrometryNetClient.Json
+﻿namespace software.elendil.AstrometryNetClient.Json
 {
 	/// <summary>
 	/// Result of a calibration request
@@ -11,22 +10,27 @@ namespace AstrometryNetClient.Json
 		/// declination
 		/// </summary>
 		public double dec { get; set; }
+
 		/// <summary>
 		/// Radius of the field
 		/// </summary>
 		public double radius { get; set; }
+
 		/// <summary>
 		/// Right ascension
 		/// </summary>
 		public double ra { get; set; }
+
 		/// <summary>
 		/// Orientation of the field
 		/// </summary>
 		public double orientation { get; set; }
+
 		/// <summary>
 		/// Pixel scale
 		/// </summary>
 		public double pixscale { get; set; }
+
 		/// <summary>
 		/// Error message
 		/// </summary>

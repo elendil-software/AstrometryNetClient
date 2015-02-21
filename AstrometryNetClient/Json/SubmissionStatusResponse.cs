@@ -1,5 +1,5 @@
 ﻿
-namespace AstrometryNetClient.Json
+namespace software.elendil.AstrometryNetClient.Json
 {
 	/// <summary>
 	/// Response of a <see cref="Client.getSubmissionStatus">getSubmissionStatus</see> request

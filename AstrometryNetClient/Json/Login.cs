@@ -1,5 +1,4 @@
-﻿
-namespace AstrometryNetClient.Json
+﻿namespace software.elendil.AstrometryNetClient.Json
 {
 	/// <summary>
 	/// JSON object sent to get a connection

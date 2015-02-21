@@ -1,5 +1,5 @@
 ﻿
-namespace AstrometryNetClient.Json
+namespace software.elendil.AstrometryNetClient.Json
 {
 	/// <summary>
 	/// Result of a <see cref="Client.getObjectsInField">getObjectsInField</see> request

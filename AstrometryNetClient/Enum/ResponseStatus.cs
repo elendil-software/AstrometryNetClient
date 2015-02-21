@@ -1,7 +1,6 @@
-﻿
-using AstrometryNetClient.Json;
+﻿using software.elendil.AstrometryNetClient.Json;
 
-namespace AstrometryNetClient.Enum
+namespace software.elendil.AstrometryNetClient.Enum
 {
 	/// <summary>
 	/// Response status received from Astrometry.net after sending a request
@@ -12,11 +11,12 @@ namespace AstrometryNetClient.Enum
 	public enum ResponseStatus
 	{
 		/// <summary>
-		/// returned in cas of unsuccesful request
+		/// returned in cas of unsuccessful request
 		/// </summary>
 		error,
+
 		/// <summary>
-		/// returned if the request succeded
+		/// returned if the request succeeded
 		/// </summary>
 		success,
 	}

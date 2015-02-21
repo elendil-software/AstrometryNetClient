@@ -1,7 +1,6 @@
-﻿
-using AstrometryNetClient.Json;
+﻿using software.elendil.AstrometryNetClient.Json;
 
-namespace AstrometryNetClient.Enum
+namespace software.elendil.AstrometryNetClient.Enum
 {
 	/// <summary>
 	/// Defines the units when custom scale is used

@@ -1,14 +1,15 @@
-﻿using AstrometryNetClient.Enum;
-using AstrometryNetClient.Exceptions;
-using AstrometryNetClient.Json;
-using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
+using software.elendil.AstrometryNetClient.Enum;
+using software.elendil.AstrometryNetClient.Exceptions;
+using software.elendil.AstrometryNetClient.Json;
 
-namespace AstrometryNetClient
+namespace software.elendil.AstrometryNetClient
 {
 	/// <summary>
 	/// Client for the Astrometry.net service.
@@ -22,11 +23,13 @@ namespace AstrometryNetClient
 		/// <summary>
 		/// URL to use to contact the service (by default : http://nova.astrometry.net/api/
 		/// </summary>
-		public string URL { get; set; }
+		private readonly string url;
+
 		/// <summary>
 		/// The API key of your account
 		/// </summary>
-		public string APIKey { get; set; }
+		private readonly string apiKey;
+
 		/// <summary>
 		/// Used to store the session key when logged in
 		/// </summary>
@@ -43,8 +46,8 @@ namespace AstrometryNetClient
 		/// <param name="url">URL to use to contact the service (http://nova.astrometry.net/api/ if not given)</param>
 		public Client(string apiKey, string url = "http://nova.astrometry.net/api/")
 		{
-			APIKey = apiKey;
-			URL = url;
+			this.apiKey = apiKey;
+			this.url = url;
 		}
 
 		#endregion
@@ -54,7 +57,7 @@ namespace AstrometryNetClient
 		/// <summary>
 		/// Log in and set the session key.
 		/// 
-		/// It returns a <code>LoginResponse</code> that must be checked to know if the connection succeeded. In case of unsuccessfull connection an error message is set.
+		/// It returns a <code>LoginResponse</code> that must be checked to know if the connection succeeded. In case of unsuccessful connection an error message is set.
 		/// </summary>
 		/// <returns>Login status</returns>
 		/// <exception cref="AstrometryException">Exception raised if the connection request failed</exception>
@@ -63,7 +66,7 @@ namespace AstrometryNetClient
 		{
 			try
 			{
-				string json = SendRequest("login", JsonConvert.SerializeObject(new Login { apikey = APIKey }));
+				string json = SendRequest("login", JsonConvert.SerializeObject(new Login {apikey = apiKey}));
 				var loginResponse = JsonConvert.DeserializeObject<LoginResponse>(json);
 
 				if (loginResponse.status.Equals(ResponseStatus.success))
@@ -104,7 +107,7 @@ namespace AstrometryNetClient
 
 			if (args == null)
 			{
-				args = new UploadArgs { session = Session };
+				args = new UploadArgs {session = Session};
 			}
 			else
 			{
@@ -113,7 +116,7 @@ namespace AstrometryNetClient
 
 
 			string boundary = "--------------------------" + DateTime.Now.Ticks.ToString("x");
-			var webRequest = (HttpWebRequest)WebRequest.Create(URL + "upload");
+			var webRequest = (HttpWebRequest) WebRequest.Create(url + "upload");
 			webRequest.Method = "POST";
 			webRequest.ContentType = "multipart/form-data; boundary=" + boundary;
 			boundary = "--" + boundary;
@@ -126,7 +129,9 @@ namespace AstrometryNetClient
 					byte[] buffer = Encoding.ASCII.GetBytes(boundary + Environment.NewLine);
 					requestStream.Write(buffer, 0, buffer.Length);
 
-					buffer = Encoding.ASCII.GetBytes("Content-Disposition: form-data; name=\"request-json\"" + Environment.NewLine + Environment.NewLine);
+					buffer =
+						Encoding.ASCII.GetBytes("Content-Disposition: form-data; name=\"request-json\"" + Environment.NewLine +
+						                        Environment.NewLine);
 					requestStream.Write(buffer, 0, buffer.Length);
 					string serializedArgs = JsonConvert.SerializeObject(args);
 					buffer = Encoding.UTF8.GetBytes(serializedArgs + Environment.NewLine);
@@ -136,10 +141,13 @@ namespace AstrometryNetClient
 					requestStream.Write(buffer, 0, buffer.Length);
 
 					//write file
-					buffer = Encoding.UTF8.GetBytes("Content-Disposition: form-data; name=\"file\"; filename=\"" + Path.GetFileName(file) + "\"" + Environment.NewLine);
+					buffer =
+						Encoding.UTF8.GetBytes("Content-Disposition: form-data; name=\"file\"; filename=\"" + Path.GetFileName(file) +
+						                       "\"" + Environment.NewLine);
 					requestStream.Write(buffer, 0, buffer.Length);
 
-					buffer = Encoding.ASCII.GetBytes("Content-Type: application/octet-stream" + Environment.NewLine + Environment.NewLine);
+					buffer =
+						Encoding.ASCII.GetBytes("Content-Type: application/octet-stream" + Environment.NewLine + Environment.NewLine);
 					requestStream.Write(buffer, 0, buffer.Length);
 
 					var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
@@ -167,10 +175,10 @@ namespace AstrometryNetClient
 				if (stream == null)
 				{
 					return new UploadResponse
-						{
-							status = ResponseStatus.error,
-							errormessage = "response stream is null"
-						};
+					{
+						status = ResponseStatus.error,
+						errormessage = "response stream is null"
+					};
 				}
 				else
 				{
@@ -194,10 +202,10 @@ namespace AstrometryNetClient
 		/// <summary>
 		/// Get the images id for the given submission ID.
 		/// </summary>
-		/// <param name="subid"></param>
+		/// <param name="submissionId"></param>
 		/// <returns>Submission images response</returns>
 		/// <exception cref="AstrometryException">Exception raised if the session is not initialized or something breaks during the request</exception>
-		public SubmissionImagesResponse GetSubmissionImages(string subid)
+		public SubmissionImagesResponse GetSubmissionImages(string submissionId)
 		{
 			if (String.IsNullOrEmpty(Session))
 			{
@@ -206,7 +214,8 @@ namespace AstrometryNetClient
 
 			try
 			{
-				string json = SendRequest("submission_images", JsonConvert.SerializeObject(new SubmissionImages { subid = subid, session = Session }));
+				string json = SendRequest("submission_images",
+					JsonConvert.SerializeObject(new SubmissionImages {subid = submissionId, session = Session}));
 				return JsonConvert.DeserializeObject<SubmissionImagesResponse>(json);
 			}
 			catch (Exception e)
@@ -218,19 +227,19 @@ namespace AstrometryNetClient
 		/// <summary>
 		/// Get the status for the given submission ID.
 		/// </summary>
-		/// <param name="subid">the submission id for which get the status</param>
+		/// <param name="submissionId">the submission id for which get the status</param>
 		/// <returns>Submission status</returns>
 		/// <exception cref="AstrometryException">Exception raised if the submission id does not exist or something breaks during the request</exception>
-		public SubmissionStatusResponse GetSubmissionStatus(string subid)
+		public SubmissionStatusResponse GetSubmissionStatus(string submissionId)
 		{
 			try
 			{
-				string json = SendRequest("submissions/" + subid, "{}");
+				string json = SendRequest("submissions/" + submissionId, "{}");
 				return JsonConvert.DeserializeObject<SubmissionStatusResponse>(json);
 			}
 			catch (WebException we)
 			{
-				if (HttpStatusCode.NotFound.Equals(((HttpWebResponse)we.Response).StatusCode))
+				if (HttpStatusCode.NotFound.Equals(((HttpWebResponse) we.Response).StatusCode))
 				{
 					throw new AstrometryException("This submission ID does not exist", we);
 				}
@@ -260,7 +269,7 @@ namespace AstrometryNetClient
 			}
 			catch (WebException we)
 			{
-				if (HttpStatusCode.NotFound.Equals(((HttpWebResponse)we.Response).StatusCode))
+				if (HttpStatusCode.NotFound.Equals(((HttpWebResponse) we.Response).StatusCode))
 				{
 					throw new AstrometryException("This Job ID does not exist", we);
 				}
@@ -291,7 +300,7 @@ namespace AstrometryNetClient
 			}
 			catch (WebException we)
 			{
-				if (HttpStatusCode.NotFound.Equals(((HttpWebResponse)we.Response).StatusCode))
+				if (HttpStatusCode.NotFound.Equals(((HttpWebResponse) we.Response).StatusCode))
 				{
 					throw new AstrometryException("This Job ID does not exist", we);
 				}
@@ -321,7 +330,7 @@ namespace AstrometryNetClient
 			}
 			catch (WebException we)
 			{
-				if (HttpStatusCode.NotFound.Equals(((HttpWebResponse)we.Response).StatusCode))
+				if (HttpStatusCode.NotFound.Equals(((HttpWebResponse) we.Response).StatusCode))
 				{
 					throw new AstrometryException("This Job ID does not exist", we);
 				}
@@ -342,7 +351,13 @@ namespace AstrometryNetClient
 
 		private string SendRequest(string service, string json)
 		{
-			var webRequest = (HttpWebRequest)WebRequest.Create(URL + service);
+			var webRequest = (HttpWebRequest) WebRequest.Create(url + service);
+
+#if DEBUG
+			Debug.WriteLine("SendRequest : " + webRequest.Address);
+			Debug.WriteLine("json : " + json);
+#endif
+
 			webRequest.ContentType = "application/x-www-form-urlencoded;";
 			webRequest.Accept = "application/json, text/javascript, */*";
 			webRequest.Method = "POST";
@@ -368,6 +383,10 @@ namespace AstrometryNetClient
 					}
 				}
 			}
+
+#if DEBUG
+			Debug.WriteLine("json response : " + json);
+#endif
 
 			return json;
 		}

@@ -1,35 +1,40 @@
-﻿using AstrometryNetClient.Json;
-using AstrometryNetClient.Enum;
-using System;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
-using AstrometryNetClient;
+using software.elendil.AstrometryNetClient;
+using software.elendil.AstrometryNetClient.Enum;
+using software.elendil.AstrometryNetClient.Json;
 
 namespace Test
 {
-	class Program
+	internal class Program
 	{
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
-			string apiKey = "astrometrynetapikey";
-			//string file = "C:/Users/Julien/Documents/Visual Studio 2012/Projects/imgTest/CCD Image 1.fit";
-			string file = "C:/Users/Julien/Documents/Visual Studio 2012/Projects/imgTest/NGC_6188.jpg";
+			var writer = new TextWriterTraceListener(Console.Out);
+			Debug.Listeners.Add(writer);
+
+			const string apiKey = "astrometrynetapikey";
+			const string file = "D:/Documents/Visual Studio 2013/Projects/AstrometryNetClient/Test/test.fit";
 
 			try
 			{
-				Client client = new Client(apiKey);
-				LoginResponse res = client.Login();
+				var client = new Client(apiKey);
+				var res = client.Login();
+				Console.WriteLine("Login : " + res.status);
 
-				UploadArgs arg = new UploadArgs { publicly_visible = Visibility.n };
-				UploadResponse ur = client.Upload(file, arg);
+				var arg = new UploadArgs {publicly_visible = Visibility.n};
+				var ur = client.Upload(file, arg);
 
 				SubmissionImagesResponse sir = new SubmissionImagesResponse();
 				do
 				{
 					try
 					{
+						Console.WriteLine("\nWaiting for images submissions...");
 						sir = client.GetSubmissionImages(ur.subid);
-						Console.WriteLine("Waiting for images submissions...");
-						Thread.Sleep(3000);
+						Thread.Sleep(1000);
 					}
 					catch (Exception e)
 					{
@@ -37,31 +42,34 @@ namespace Test
 					}
 				} while (sir.image_ids.Length == 0);
 
-				bool next = false;
-				SubmissionStatusResponse ssr = new SubmissionStatusResponse();
+				var next = false;
+				var ssr = new SubmissionStatusResponse();
+				string[] jobs = {};
+
 				do
 				{
 					try
 					{
+						Console.WriteLine("\nWaiting for jobs...");
 						ssr = client.GetSubmissionStatus(ur.subid);
-						Console.WriteLine("Waiting for jobs...");
-						Thread.Sleep(1000);
+						Thread.Sleep(500);
+						jobs = ssr.jobs.Where(x => !string.IsNullOrEmpty(x)).ToArray();
 					}
 					catch (Exception e)
 					{
 						Console.WriteLine(e.Message);
 						next = true;
 					}
-				} while (ssr.jobs.Length == 0 && !next);
+				} while (jobs.Length == 0 && !next);
 
 
-				JobStatusResponse jsr = new JobStatusResponse();
+				var jsr = new JobStatusResponse();
 				do
 				{
 					try
 					{
+						Console.WriteLine("\nSolving...");
 						jsr = client.GetJobStatus(ssr.jobs[0]);
-						Console.WriteLine("Solving...");
 						Thread.Sleep(1000);
 					}
 					catch (Exception e)
@@ -75,7 +83,7 @@ namespace Test
 					CalibrationResponse cr = client.GetCalibration(ssr.jobs[0]);
 					ObjectsInFieldResponse oifr = client.GetObjectsInField(ssr.jobs[0]);
 
-					Console.WriteLine("RA : " + cr.ra);
+					Console.WriteLine("\nRA : " + cr.ra);
 					Console.WriteLine("Dec : " + cr.dec);
 					Console.WriteLine("radius : " + cr.radius);
 
@@ -89,13 +97,13 @@ namespace Test
 				{
 					Console.WriteLine("Status : " + jsr.status);
 				}
-
-
-				Console.ReadKey();
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e.Message);
+			}
+			finally
+			{
 				Console.ReadKey();
 			}
 		}

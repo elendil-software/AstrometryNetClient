@@ -1,7 +1,6 @@
-﻿
-using AstrometryNetClient.Json;
+﻿using software.elendil.AstrometryNetClient.Json;
 
-namespace AstrometryNetClient.Enum
+namespace software.elendil.AstrometryNetClient.Enum
 {
 	/// <summary>
 	/// Response status received from Astrometry.net after sending a JobStatus request
@@ -10,13 +9,15 @@ namespace AstrometryNetClient.Enum
 	public enum ResponseJobStatus
 	{
 		/// <summary>
-		/// the solve succeded
+		/// the solve succeeded
 		/// </summary>
 		success,
+
 		/// <summary>
-		/// unsucessful solve
+		/// unsuccessful solve
 		/// </summary>
 		failure,
+
 		/// <summary>
 		/// the image is currently processed
 		/// </summary>
