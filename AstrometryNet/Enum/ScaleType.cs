@@ -1,6 +1,6 @@
-﻿using software.elendil.AstrometryNetClient.Json;
+﻿using software.elendil.AstrometryNet.Json;
 
-namespace software.elendil.AstrometryNetClient.Enum
+namespace software.elendil.AstrometryNet.Enum
 {
 	/// <summary>
 	/// Define the scale type if custom scale is used

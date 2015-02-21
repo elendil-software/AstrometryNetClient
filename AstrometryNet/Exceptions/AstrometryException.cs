@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace software.elendil.AstrometryNetClient.Exceptions
+namespace software.elendil.AstrometryNet.Exceptions
 {
 	/// <summary>
 	/// Exception that can be raised by the Astrometry.net C# client

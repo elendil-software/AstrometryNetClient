@@ -5,18 +5,18 @@ using System.Net;
 using System.Text;
 using System.Web;
 using Newtonsoft.Json;
-using software.elendil.AstrometryNetClient.Enum;
-using software.elendil.AstrometryNetClient.Exceptions;
-using software.elendil.AstrometryNetClient.Json;
+using software.elendil.AstrometryNet.Enum;
+using software.elendil.AstrometryNet.Exceptions;
+using software.elendil.AstrometryNet.Json;
 
-namespace software.elendil.AstrometryNetClient
+namespace software.elendil.AstrometryNet
 {
 	/// <summary>
-	/// Client for the Astrometry.net service.
+	/// RequestSender for the Astrometry.net service.
 	/// 
 	/// It provides all necessary method to use the Astrometry.net API. See http://nova.astrometry.net/api_help for more details
 	/// </summary>
-	public class Client
+	public class RequestSender
 	{
 		#region Properties
 
@@ -33,7 +33,7 @@ namespace software.elendil.AstrometryNetClient
 		/// <summary>
 		/// Used to store the session key when logged in
 		/// </summary>
-		public string Session { get; set; }
+		private string session;
 
 		#endregion
 
@@ -44,7 +44,7 @@ namespace software.elendil.AstrometryNetClient
 		/// </summary>
 		/// <param name="apiKey">The API key of your account</param>
 		/// <param name="url">URL to use to contact the service (http://nova.astrometry.net/api/ if not given)</param>
-		public Client(string apiKey, string url = "http://nova.astrometry.net/api/")
+		public RequestSender(string apiKey, string url = "http://nova.astrometry.net/api/")
 		{
 			this.apiKey = apiKey;
 			this.url = url;
@@ -66,18 +66,15 @@ namespace software.elendil.AstrometryNetClient
 		{
 			try
 			{
-				string json = SendRequest("login", JsonConvert.SerializeObject(new Login {apikey = apiKey}));
+				var json = SendRequest("login", JsonConvert.SerializeObject(new Login {apikey = apiKey}));
 				var loginResponse = JsonConvert.DeserializeObject<LoginResponse>(json);
 
 				if (loginResponse.status.Equals(ResponseStatus.success))
 				{
-					Session = loginResponse.session;
-					return loginResponse;
+					session = loginResponse.session;
 				}
-				else
-				{
-					return loginResponse;
-				}
+
+				return loginResponse;
 			}
 			catch (Exception e)
 			{
@@ -100,18 +97,18 @@ namespace software.elendil.AstrometryNetClient
 				throw new AstrometryException("File " + file + " does not exist");
 			}
 
-			if (String.IsNullOrEmpty(Session))
+			if (String.IsNullOrEmpty(session))
 			{
-				throw new AstrometryException("Session is not initialized");
+				throw new AstrometryException("session is not initialized");
 			}
 
 			if (args == null)
 			{
-				args = new UploadArgs {session = Session};
+				args = new UploadArgs {session = session};
 			}
 			else
 			{
-				args.session = Session;
+				args.session = session;
 			}
 
 
@@ -126,7 +123,7 @@ namespace software.elendil.AstrometryNetClient
 				try
 				{
 					//Write JSON
-					byte[] buffer = Encoding.ASCII.GetBytes(boundary + Environment.NewLine);
+					var buffer = Encoding.ASCII.GetBytes(boundary + Environment.NewLine);
 					requestStream.Write(buffer, 0, buffer.Length);
 
 					buffer =
@@ -180,18 +177,16 @@ namespace software.elendil.AstrometryNetClient
 						errormessage = "response stream is null"
 					};
 				}
-				else
-				{
-					using (var reader = new StreamReader(stream))
-					{
-						while (!reader.EndOfStream)
-						{
-							json += reader.ReadLine();
-						}
-					}
 
-					return JsonConvert.DeserializeObject<UploadResponse>(json);
+				using (var reader = new StreamReader(stream))
+				{
+					while (!reader.EndOfStream)
+					{
+						json += reader.ReadLine();
+					}
 				}
+
+				return JsonConvert.DeserializeObject<UploadResponse>(json);
 			}
 			catch (Exception e)
 			{
@@ -207,15 +202,15 @@ namespace software.elendil.AstrometryNetClient
 		/// <exception cref="AstrometryException">Exception raised if the session is not initialized or something breaks during the request</exception>
 		public SubmissionImagesResponse GetSubmissionImages(string submissionId)
 		{
-			if (String.IsNullOrEmpty(Session))
+			if (String.IsNullOrEmpty(session))
 			{
-				throw new AstrometryException("Session is not initialized");
+				throw new AstrometryException("session is not initialized");
 			}
 
 			try
 			{
-				string json = SendRequest("submission_images",
-					JsonConvert.SerializeObject(new SubmissionImages {subid = submissionId, session = Session}));
+				var json = SendRequest("submission_images",
+					JsonConvert.SerializeObject(new SubmissionImages {subid = submissionId, session = session}));
 				return JsonConvert.DeserializeObject<SubmissionImagesResponse>(json);
 			}
 			catch (Exception e)
@@ -234,7 +229,7 @@ namespace software.elendil.AstrometryNetClient
 		{
 			try
 			{
-				string json = SendRequest("submissions/" + submissionId, "{}");
+				var json = SendRequest("submissions/" + submissionId, "{}");
 				return JsonConvert.DeserializeObject<SubmissionStatusResponse>(json);
 			}
 			catch (WebException we)
@@ -243,10 +238,8 @@ namespace software.elendil.AstrometryNetClient
 				{
 					throw new AstrometryException("This submission ID does not exist", we);
 				}
-				else
-				{
-					throw new AstrometryException(we.Message, we);
-				}
+
+				throw new AstrometryException(we.Message, we);
 			}
 			catch (Exception e)
 			{
@@ -264,7 +257,7 @@ namespace software.elendil.AstrometryNetClient
 		{
 			try
 			{
-				string json = SendRequest("jobs/" + jobId, "{}");
+				var json = SendRequest("jobs/" + jobId, "{}");
 				return JsonConvert.DeserializeObject<JobStatusResponse>(json);
 			}
 			catch (WebException we)
@@ -273,10 +266,8 @@ namespace software.elendil.AstrometryNetClient
 				{
 					throw new AstrometryException("This Job ID does not exist", we);
 				}
-				else
-				{
-					throw new AstrometryException(we.Message, we);
-				}
+
+				throw new AstrometryException(we.Message, we);
 			}
 			catch (Exception e)
 			{
@@ -295,8 +286,8 @@ namespace software.elendil.AstrometryNetClient
 		{
 			try
 			{
-				string result = SendRequest("jobs/" + jobId + "/calibration", "{}");
-				return JsonConvert.DeserializeObject<CalibrationResponse>(result);
+				var json = SendRequest("jobs/" + jobId + "/calibration", "{}");
+				return JsonConvert.DeserializeObject<CalibrationResponse>(json);
 			}
 			catch (WebException we)
 			{
@@ -304,10 +295,8 @@ namespace software.elendil.AstrometryNetClient
 				{
 					throw new AstrometryException("This Job ID does not exist", we);
 				}
-				else
-				{
-					throw new AstrometryException(we.Message, we);
-				}
+
+				throw new AstrometryException(we.Message, we);
 			}
 			catch (Exception e)
 			{
@@ -325,7 +314,7 @@ namespace software.elendil.AstrometryNetClient
 		{
 			try
 			{
-				string result = SendRequest("jobs/" + jobId + "/objects_in_field", "{}");
+				var result = SendRequest("jobs/" + jobId + "/objects_in_field", "{}");
 				return JsonConvert.DeserializeObject<ObjectsInFieldResponse>(result);
 			}
 			catch (WebException we)
@@ -334,10 +323,8 @@ namespace software.elendil.AstrometryNetClient
 				{
 					throw new AstrometryException("This Job ID does not exist", we);
 				}
-				else
-				{
-					throw new AstrometryException(we.Message, we);
-				}
+
+				throw new AstrometryException(we.Message, we);
 			}
 			catch (Exception e)
 			{

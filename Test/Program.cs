@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using software.elendil.AstrometryNetClient;
-using software.elendil.AstrometryNetClient.Enum;
-using software.elendil.AstrometryNetClient.Json;
+using software.elendil.AstrometryNet;
+using software.elendil.AstrometryNet.Enum;
+using software.elendil.AstrometryNet.Json;
 
 namespace Test
 {
@@ -20,7 +20,7 @@ namespace Test
 
 			try
 			{
-				var client = new Client(apiKey);
+				var client = new RequestSender(apiKey);
 				var res = client.Login();
 				Console.WriteLine("Login : " + res.status);
 

@@ -1,6 +1,6 @@
-﻿using software.elendil.AstrometryNetClient.Json;
+﻿using software.elendil.AstrometryNet.Json;
 
-namespace software.elendil.AstrometryNetClient.Enum
+namespace software.elendil.AstrometryNet.Enum
 {
 	/// <summary>
 	/// Indicates if the image can be used for commercial uses. See http://nova.astrometry.net/upload for more details

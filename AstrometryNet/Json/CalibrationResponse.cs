@@ -1,9 +1,9 @@
-﻿namespace software.elendil.AstrometryNetClient.Json
+﻿namespace software.elendil.AstrometryNet.Json
 {
 	/// <summary>
 	/// Result of a calibration request
 	/// </summary>
-	/// <seealso cref="Client.GetCalibration"/>
+	/// <seealso cref="RequestSender.GetCalibration"/>
 	public class CalibrationResponse
 	{
 		/// <summary>

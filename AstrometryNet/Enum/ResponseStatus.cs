@@ -1,6 +1,6 @@
-﻿using software.elendil.AstrometryNetClient.Json;
+﻿using software.elendil.AstrometryNet.Json;
 
-namespace software.elendil.AstrometryNetClient.Enum
+namespace software.elendil.AstrometryNet.Enum
 {
 	/// <summary>
 	/// Response status received from Astrometry.net after sending a request

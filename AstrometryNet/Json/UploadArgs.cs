@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using software.elendil.AstrometryNetClient.Enum;
+using software.elendil.AstrometryNet.Enum;
 
-namespace software.elendil.AstrometryNetClient.Json
+namespace software.elendil.AstrometryNet.Json
 {
 	/// <summary>
 	/// Parameters to use to upload an image.
@@ -16,35 +16,35 @@ namespace software.elendil.AstrometryNetClient.Json
 		/// <summary>
 		/// Allow commercial use?
 		/// </summary>
-		[JsonConverter(typeof(StringEnumConverter))]
+		[JsonConverter(typeof (StringEnumConverter))]
 		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
 		public AllowCommercialUse allow_commercial_use { get; set; }
 
 		/// <summary>
 		/// Allow modifications?
 		/// </summary>
-		[JsonConverter(typeof(StringEnumConverter))]
+		[JsonConverter(typeof (StringEnumConverter))]
 		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
 		public AllowModifications allow_modifications { get; set; }
 
 		/// <summary>
 		/// Show publicly the image on astrometry.net
 		/// </summary>
-		[JsonConverter(typeof(StringEnumConverter))]
+		[JsonConverter(typeof (StringEnumConverter))]
 		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
 		public Visibility publicly_visible { get; set; }
 
 		/// <summary>
 		/// Scale units. Have to be defined if custom scale is used
 		/// </summary>
-		[JsonConverter(typeof(StringEnumConverter))]
+		[JsonConverter(typeof (StringEnumConverter))]
 		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
 		public ScaleUnits? scale_units { get; set; }
 
 		/// <summary>
 		/// Scale type (bounds or estimate +/- error)
 		/// </summary>
-		[JsonConverter(typeof(StringEnumConverter))]
+		[JsonConverter(typeof (StringEnumConverter))]
 		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
 		public ScaleType? scale_type { get; set; }
 
@@ -97,7 +97,7 @@ namespace software.elendil.AstrometryNetClient.Json
 		public int? downsample_factor { get; set; }
 
 		/// <summary>
-		/// The session you get with Client.Login
+		/// The session you get with RequestSender.Login
 		/// </summary>
 		public string session { get; set; }
 	}

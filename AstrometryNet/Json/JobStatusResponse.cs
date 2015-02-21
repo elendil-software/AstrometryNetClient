@@ -1,13 +1,13 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using software.elendil.AstrometryNetClient.Enum;
+using software.elendil.AstrometryNet.Enum;
 
-namespace software.elendil.AstrometryNetClient.Json
+namespace software.elendil.AstrometryNet.Json
 {
 	/// <summary>
 	/// Result of a job status request
 	/// </summary>
-	/// <seealso cref="Client.GetJobStatus"/>
+	/// <seealso cref="RequestSender.GetJobStatus"/>
 	public class JobStatusResponse
 	{
 		/// <summary>

@@ -44,9 +44,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AstrometryNetClient\AstrometryNetClient.csproj">
+    <ProjectReference Include="..\AstrometryNet\AstrometryNet.csproj">
       <Project>{d2a87506-305e-4d64-8801-71a719be56cc}</Project>
-      <Name>AstrometryNetClient</Name>
+      <Name>AstrometryNet</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

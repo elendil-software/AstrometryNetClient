@@ -1,9 +1,9 @@
-﻿namespace software.elendil.AstrometryNetClient.Json
+﻿namespace software.elendil.AstrometryNet.Json
 {
 	/// <summary>
 	/// JSON object sent to get a connection
 	/// </summary>
-	/// <seealso cref="Client.Login"/>
+	/// <seealso cref="RequestSender.Login"/>
 	public class Login
 	{
 		/// <summary>
