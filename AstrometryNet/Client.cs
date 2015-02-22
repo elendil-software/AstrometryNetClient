@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using software.elendil.AstrometryNet.Enum;
 using software.elendil.AstrometryNet.Exceptions;
 using software.elendil.AstrometryNet.Json;
@@ -77,9 +78,11 @@ namespace software.elendil.AstrometryNet
 		/// Get the images id for the given submission ID.
 		/// </summary>
 		/// <param name="submissionId"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns>Submission images response</returns>
 		/// <exception cref="AstrometryException">Exception raised if the session is not initialized or something breaks during the request</exception>
-		public SubmissionImagesResponse GetSubmissionImages(string submissionId)
+		public async Task<SubmissionImagesResponse> GetSubmissionImages(string submissionId,
+			CancellationToken cancellationToken)
 		{
 			if (submissionId == null) throw new ArgumentNullException("submissionId");
 
@@ -88,30 +91,36 @@ namespace software.elendil.AstrometryNet
 				throw new AstrometryNotConnectedException("Service is not connected, call Login first");
 			}
 
-			SubmissionImagesResponse submissionImagesResponse;
-			string[] images;
 
-			do
+			return await Task.Factory.StartNew(() =>
 			{
+				SubmissionImagesResponse submissionImagesResponse;
+				string[] images;
+
+				do
+				{
 #if DEBUG
 				Debug.WriteLine("\nWaiting for images submissions...");
 #endif
 
-				submissionImagesResponse = requestSender.GetSubmissionImages(submissionId);
-				images = submissionImagesResponse.image_ids.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-				Thread.Sleep(1000);
-			} while (images.Length == 0);
+					submissionImagesResponse = requestSender.GetSubmissionImages(submissionId);
+					images = submissionImagesResponse.image_ids.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+					Thread.Sleep(1000);
+				} while (images.Length == 0 && !cancellationToken.IsCancellationRequested);
 
-			return submissionImagesResponse;
+				return submissionImagesResponse;
+			}, cancellationToken);
 		}
 
 		/// <summary>
 		/// Get the status for the given submission ID.
 		/// </summary>
 		/// <param name="submissionId">the submission id for which get the status</param>
+		/// <param name="cancellationToken"></param>
 		/// <returns>Submission status</returns>
 		/// <exception cref="AstrometryException">Exception raised if the submission id does not exist or something breaks during the request</exception>
-		public SubmissionStatusResponse GetSubmissionStatus(string submissionId)
+		public async Task<SubmissionStatusResponse> GetSubmissionStatus(string submissionId,
+			CancellationToken cancellationToken)
 		{
 			if (submissionId == null) throw new ArgumentNullException("submissionId");
 
@@ -120,29 +129,33 @@ namespace software.elendil.AstrometryNet
 				throw new AstrometryNotConnectedException("Service is not connected, call Login first");
 			}
 
-			SubmissionStatusResponse submissionStatusResponse;
-			string[] jobs;
-
-			do
+			return await Task.Factory.StartNew(() =>
 			{
+				SubmissionStatusResponse submissionStatusResponse;
+				string[] jobs;
+
+				do
+				{
 #if DEBUG
 				Debug.WriteLine("\nWaiting for jobs...");
 #endif
-				submissionStatusResponse = requestSender.GetSubmissionStatus(submissionId);
-				Thread.Sleep(1000);
-				jobs = submissionStatusResponse.jobs.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-			} while (jobs.Length == 0);
+					submissionStatusResponse = requestSender.GetSubmissionStatus(submissionId);
+					Thread.Sleep(1000);
+					jobs = submissionStatusResponse.jobs.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+				} while (jobs.Length == 0);
 
-			return submissionStatusResponse;
+				return submissionStatusResponse;
+			}, cancellationToken);
 		}
 
 		/// <summary>
 		/// Get the status for the given submission ID.
 		/// </summary>
 		/// <param name="jobId">the job id for which get the status</param>
+		/// <param name="cancellationToken"></param>
 		/// <returns>Job status</returns>
 		/// <exception cref="AstrometryException">Exception raised if the job id does not exist or something breaks during the request</exception>
-		public JobStatusResponse GetJobStatus(string jobId)
+		public async Task<JobStatusResponse> GetJobStatus(string jobId, CancellationToken cancellationToken)
 		{
 			if (jobId == null) throw new ArgumentNullException("jobId");
 
@@ -152,17 +165,20 @@ namespace software.elendil.AstrometryNet
 			}
 
 			JobStatusResponse jobStatusResponse;
-
-			do
+			return await Task.Factory.StartNew(() =>
 			{
+				do
+				{
 #if DEBUG
 				Debug.WriteLine("\nSolving...");
 #endif
-				jobStatusResponse = requestSender.GetJobStatus(jobId);
-				Thread.Sleep(1000);
-			} while (jobStatusResponse.status.Equals(ResponseJobStatus.solving));
+					jobStatusResponse = requestSender.GetJobStatus(jobId);
+					Thread.Sleep(1000);
+				} while (jobStatusResponse.status.Equals(ResponseJobStatus.solving) ||
+				         jobStatusResponse.status.Equals(ResponseJobStatus.processing));
 
-			return jobStatusResponse;
+				return jobStatusResponse;
+			}, cancellationToken);
 		}
 
 		/// <summary>

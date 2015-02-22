@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using software.elendil.AstrometryNet;
 using software.elendil.AstrometryNet.Enum;
 using software.elendil.AstrometryNet.Json;
@@ -13,26 +15,30 @@ namespace Test
 			var writer = new TextWriterTraceListener(Console.Out);
 			Debug.Listeners.Add(writer);
 
-			const string apiKey = "astrometrynetapikey";
-			const string file = "D:/Documents/Visual Studio 2013/Projects/AstrometryNetClient/Test/test.fit";
+			const string apiKey = "sijkitkzieecdwzm";
+			//const string file = "D:/Documents/Visual Studio 2013/Projects/AstrometryNetClient/Test/test.fit";
+			//const string file = "C:/Users/Julien/Desktop/cone nebula - avec erreur coordonées.fit";
+			const string file = "C:/Users/Julien/Desktop/cone nebula.fit";
 
 			try
 			{
-				var client2 = new Client(apiKey);
-				var res2 = client2.Login();
-				Console.WriteLine("Login : " + res2.status);
+				var client = new Client(apiKey);
+				var res = client.Login();
+				Console.WriteLine("Login : " + res.status);
+				CancellationTokenSource tokenSource = new CancellationTokenSource();
+				CancellationToken token = tokenSource.Token;
 
 				var uploadArguments = new UploadArgs {publicly_visible = Visibility.n};
-				var uploadResponse = client2.Upload(file, uploadArguments);
+				var uploadResponse = client.Upload(file, uploadArguments);
 
 				//SubmissionImagesResponse submissionImagesResponse = client2.GetSubmissionImages(uploadResponse.subid);
-				SubmissionStatusResponse submissionStatusResponse = client2.GetSubmissionStatus(uploadResponse.subid);
-				JobStatusResponse jobStatusResponse = client2.GetJobStatus(submissionStatusResponse.jobs[0]);
+				Task<SubmissionStatusResponse> submissionStatusResponse = client.GetSubmissionStatus(uploadResponse.subid, token);
+				Task<JobStatusResponse> jobStatusResponse = client.GetJobStatus(submissionStatusResponse.Result.jobs[0], token);
 
-				if (jobStatusResponse.status.Equals(ResponseJobStatus.success))
+				if (jobStatusResponse.Result.status.Equals(ResponseJobStatus.success))
 				{
-					var calibrationResponse = client2.GetCalibration(submissionStatusResponse.jobs[0]);
-					var objectsInFieldResponse = client2.GetObjectsInField(submissionStatusResponse.jobs[0]);
+					var calibrationResponse = client.GetCalibration(submissionStatusResponse.Result.jobs[0]);
+					var objectsInFieldResponse = client.GetObjectsInField(submissionStatusResponse.Result.jobs[0]);
 
 					Console.WriteLine("\nRA : " + calibrationResponse.ra);
 					Console.WriteLine("Dec : " + calibrationResponse.dec);
@@ -46,7 +52,7 @@ namespace Test
 				}
 				else
 				{
-					Console.WriteLine("Status : " + jobStatusResponse.status);
+					Console.WriteLine("Status : " + jobStatusResponse.Result.status);
 				}
 			}
 			catch (Exception e)

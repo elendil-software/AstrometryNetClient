@@ -22,5 +22,10 @@ namespace software.elendil.AstrometryNet.Enum
 		/// the image is currently processed
 		/// </summary>
 		solving,
+
+		/// <summary>
+		/// the image is currently processed
+		/// </summary>
+		processing
 	}
 }
