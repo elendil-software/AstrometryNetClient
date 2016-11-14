@@ -15,10 +15,8 @@ namespace Test
 			var writer = new TextWriterTraceListener(Console.Out);
 			Debug.Listeners.Add(writer);
 
-			const string apiKey = "sijkitkzieecdwzm";
-			//const string file = "D:/Documents/Visual Studio 2013/Projects/AstrometryNetClient/Test/test.fit";
-			//const string file = "C:/Users/Julien/Desktop/cone nebula - avec erreur coordonées.fit";
-			const string file = "C:/Users/Julien/Desktop/cone nebula.fit";
+			const string apiKey = "astrometrynetapikey";
+			const string file = "test.fit";
 
 			try
 			{
@@ -31,7 +29,6 @@ namespace Test
 				var uploadArguments = new UploadArgs {publicly_visible = Visibility.n};
 				var uploadResponse = client.Upload(file, uploadArguments);
 
-				//SubmissionImagesResponse submissionImagesResponse = client2.GetSubmissionImages(uploadResponse.subid);
 				Task<SubmissionStatusResponse> submissionStatusResponse = client.GetSubmissionStatus(uploadResponse.subid, token);
 				Task<JobStatusResponse> jobStatusResponse = client.GetJobStatus(submissionStatusResponse.Result.jobs[0], token);
 
