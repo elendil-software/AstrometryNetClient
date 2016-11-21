@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
 
-[assembly: AssemblyTitle("Astrometry.net")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Astrometry.net Client")]
+[assembly: AssemblyDescription("Library developed that allows to use the astrometry.net plate solve service")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Elendil Softwares")]
-[assembly: AssemblyProduct("Astrometry.net")]
-[assembly: AssemblyCopyright("© 2013-2015 - Elendil Softwares - Julien Tschäppät")]
+[assembly: AssemblyCompany("Julien Tschäppät")]
+[assembly: AssemblyProduct("Astrometry.net Client")]
+[assembly: AssemblyCopyright("© 2013-2016 - Elendil Softwares - Julien Tschäppät")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
