@@ -6,3 +6,5 @@ AstrometryNet.v12.suo
 .localhistory/
 .vs/
 packages/
+TestWinForms/obj
+TestWinForms/bin/
