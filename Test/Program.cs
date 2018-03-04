@@ -8,13 +8,10 @@ using software.elendil.AstrometryNet.Json;
 
 namespace Test
 {
-	internal class Program
+	internal static class Program
 	{
 		private static void Main(string[] args)
 		{
-			var writer = new TextWriterTraceListener(Console.Out);
-			Debug.Listeners.Add(writer);
-
 			const string apiKey = "astrometrynetapikey";
 			const string file = "test.fit";
 
