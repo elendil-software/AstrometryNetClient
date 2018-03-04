@@ -17,6 +17,8 @@
     <PackageTags>Astronomy,Astrometry</PackageTags>
     <AssemblyName>AstrometryNet</AssemblyName>
     <RootNamespace>software.elendil.AstrometryNet</RootNamespace>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
