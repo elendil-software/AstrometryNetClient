@@ -143,19 +143,19 @@ namespace software.elendil.AstrometryNet
 					requestStream.Write(buffer, 0, buffer.Length);
 
 					//write file
-					buffer =
-						Encoding.UTF8.GetBytes("Content-Disposition: form-data; name=\"file\"; filename=\"" + Path.GetFileName(file) +
+					buffer = Encoding.UTF8.GetBytes("Content-Disposition: form-data; name=\"file\"; filename=\"" + Path.GetFileName(file) +
 						                       "\"" + Environment.NewLine);
 					requestStream.Write(buffer, 0, buffer.Length);
 
-					buffer =
-						Encoding.ASCII.GetBytes("Content-Type: application/octet-stream" + Environment.NewLine + Environment.NewLine);
+					buffer = Encoding.ASCII.GetBytes("Content-Type: application/octet-stream" + Environment.NewLine + Environment.NewLine);
 					requestStream.Write(buffer, 0, buffer.Length);
 
-					var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
-					fileStream.CopyTo(requestStream);
+                    using (var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read))
+                    {
+                        fileStream.CopyTo(requestStream);
+                    }
 
-					buffer = Encoding.ASCII.GetBytes(Environment.NewLine);
+                    buffer = Encoding.ASCII.GetBytes(Environment.NewLine);
 					requestStream.Write(buffer, 0, buffer.Length);
 
 					buffer = Encoding.ASCII.GetBytes(boundary + "--");
@@ -168,7 +168,7 @@ namespace software.elendil.AstrometryNet
 			}
 
 
-			string json = "";
+			var json = new StringBuilder();
 			try
 			{
 				WebResponse response = webRequest.GetResponse();
@@ -187,11 +187,11 @@ namespace software.elendil.AstrometryNet
 				{
 					while (!reader.EndOfStream)
 					{
-						json += reader.ReadLine();
+						json.Append(reader.ReadLine());
 					}
 				}
 
-				return JsonConvert.DeserializeObject<UploadResponse>(json);
+				return JsonConvert.DeserializeObject<UploadResponse>(json.ToString());
 			}
 			catch (Exception e)
 			{
@@ -356,11 +356,11 @@ namespace software.elendil.AstrometryNet
 
 			using (var writer = new StreamWriter(webRequest.GetRequestStream()))
 			{
-				writer.Write("request-json=" + HttpUtility.UrlEncode(json));
+                writer.Write($"request-json={HttpUtility.UrlEncode(json)}");
 				writer.Close();
 			}
 
-			json = "";
+			var jsonResponse = new StringBuilder();
 
 			WebResponse response = webRequest.GetResponse();
 			Stream stream = response.GetResponseStream();
@@ -371,16 +371,16 @@ namespace software.elendil.AstrometryNet
 				{
 					while (!reader.EndOfStream)
 					{
-						json += reader.ReadLine();
+                        jsonResponse.Append(reader.ReadLine());
 					}
 				}
 			}
 
 #if DEBUG
-			Debug.WriteLine("json response : " + json);
+			Debug.WriteLine($"json response : {jsonResponse}");
 #endif
 
-			return json;
+            return jsonResponse.ToString();
 		}
 
 		#endregion
