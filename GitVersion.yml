@@ -1,8 +1,0 @@
-mode: ContinuousDelivery
-branches:
-  release:
-    mode: ContinuousDeployment
-  hotfix:
-    mode: ContinuousDeployment
-ignore:
-  sha: []
