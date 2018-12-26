@@ -10,7 +10,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>AstrometryNet</PackageId>
-    <PackageLicenseUrl>https://github.com/elendil-software/AstrometryNetClient/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/elendil-software/AstrometryNetClient/blob/master/LICENSE.md</PackageLicenseUrl>
     <PackageProjectUrl>http://www.elendil.software/en/softwares/libs/astrometry-net-client.html</PackageProjectUrl>
     <Product>Astrometry.net Client</Product>
     <RepositoryUrl>https://github.com/elendil-software/AstrometryNetClient</RepositoryUrl>
@@ -19,7 +19,7 @@
     <RootNamespace>software.elendil.AstrometryNet</RootNamespace>
     <AssemblyVersion>1.1.1</AssemblyVersion>
     <FileVersion>1.1.1</FileVersion>
-    <PackageReleaseNotes>This version now targets .Net Standard 2.0, .Net Framework 4.0 and .Net Framework 4.5</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/elendil-software/AstrometryNetClient/releases/latest</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
