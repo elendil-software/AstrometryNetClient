@@ -5,28 +5,33 @@
     <Description>Library that allows to use the astrometry.net plate solve service from a .NET application</Description>
     <Authors>Julien Tschäppät</Authors>
     <Company>Julien Tschäppät</Company>
-    <Version>1.1.1</Version>
-    <Copyright>© 2013-2018 - Julien Tschäppät</Copyright>
+    <Copyright>© 2013-2025 - Julien Tschäppät</Copyright>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>AstrometryNet</PackageId>
-    <PackageLicenseUrl>https://github.com/elendil-software/AstrometryNetClient/blob/master/LICENSE.md</PackageLicenseUrl>
-    <PackageProjectUrl>http://www.elendil.software/en/softwares/libs/astrometry-net-client.html</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/elendil-software/AstrometryNetClient</PackageProjectUrl>
     <Product>Astrometry.net Client</Product>
     <RepositoryUrl>https://github.com/elendil-software/AstrometryNetClient</RepositoryUrl>
     <PackageTags>Astronomy,Astrometry</PackageTags>
     <AssemblyName>AstrometryNet</AssemblyName>
     <RootNamespace>software.elendil.AstrometryNet</RootNamespace>
-    <AssemblyVersion>1.1.1</AssemblyVersion>
-    <FileVersion>1.1.1</FileVersion>
     <PackageReleaseNotes>https://github.com/elendil-software/AstrometryNetClient/releases/latest</PackageReleaseNotes>
+    <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>  
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
+  
   <ItemGroup>
     <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net48'" />
   </ItemGroup>
-
+    
+  <ItemGroup>
+    <Content Include="..\README.md" Pack="true" PackagePath="\">
+      <Link>Docs\README.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>  
 </Project>
